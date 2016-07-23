@@ -16,8 +16,8 @@ public class Follow : MonoBehaviour {
     void Start () {
         _camera = GetComponent<Camera>();
 
-        transform.position = _target.position + _offset;
-        transform.rotation = _rotation.ToQuat();
+        transform.localPosition = _target.position + _offset;
+        transform.localRotation = _rotation.ToQuat();
 
     }
 
@@ -27,11 +27,11 @@ public class Follow : MonoBehaviour {
 
     void FollowTarget()
     {
-        transform.position -= _offset;
+        transform.localPosition -= _offset;
         Vector3 point = _camera.WorldToViewportPoint(_target.position);
         Vector3 delta = _target.position - _camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0.5f));
-        Vector3 destination = transform.position + delta;
-        transform.position = Vector3.SmoothDamp(transform.position, destination, ref _velocity, _dampTime) + _offset;
-        transform.rotation = _rotation.ToQuat();
+        Vector3 destination = transform.localPosition + delta;
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, destination, ref _velocity, _dampTime) + _offset;
+        transform.localRotation = _rotation.ToQuat();
     }
 }

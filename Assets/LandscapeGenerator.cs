@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour {
+public class LandscapeGenerator : MonoBehaviour {
+
+    public GameObject _landscapeMesh;
 
 	// Use this for initialization
 	void Start () {
