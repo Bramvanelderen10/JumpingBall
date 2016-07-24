@@ -5,6 +5,7 @@ public class PlayerInput : MonoBehaviour {
 
     public float _force = 2f;
     public float _gravityMultiplier = 2f;
+    public float _maxVelocity = 10f;
 
     private Rigidbody _rb;
     private Player _player;
@@ -27,10 +28,16 @@ public class PlayerInput : MonoBehaviour {
             _rb.AddForce(new Vector3(_force, 0, 0), ForceMode.Force);
         }
 
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            _rb.AddForce(new Vector3(0, 0, (_force / 1.0f)), ForceMode.Force);
+        }
+
         if (Input.GetKey(KeyCode.DownArrow))
         {
             _rb.AddForce(new Vector3(0, 0, -(_force / 1.0f)), ForceMode.Force);
         }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (_player.CanJump())
@@ -38,6 +45,34 @@ public class PlayerInput : MonoBehaviour {
                 _rb.AddForce(new Vector3(0, _force, 0), ForceMode.Impulse);
                 _player.Jump();
             }            
+        }
+
+        if (_rb.velocity.x > _maxVelocity)
+        {
+            Vector3 velocity = _rb.velocity;
+            velocity.x = _maxVelocity;
+            _rb.velocity = velocity;
+        }
+
+        if (_rb.velocity.z > _maxVelocity)
+        {
+            Vector3 velocity = _rb.velocity;
+            velocity.z = _maxVelocity;
+            _rb.velocity = velocity;
+        }
+
+        if (_rb.velocity.x < -_maxVelocity)
+        {
+            Vector3 velocity = _rb.velocity;
+            velocity.x = -_maxVelocity;
+            _rb.velocity = velocity;
+        }
+
+        if (_rb.velocity.z < -_maxVelocity)
+        {
+            Vector3 velocity = _rb.velocity;
+            velocity.z = -_maxVelocity;
+            _rb.velocity = velocity;
         }
     }
 

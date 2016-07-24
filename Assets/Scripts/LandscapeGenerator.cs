@@ -6,30 +6,32 @@ public class LandscapeGenerator : MonoBehaviour {
 
     public GameObject _landscapeMesh;
 
+    public int _length = 100, _width = 10;
+    public float _curveDepth = 5;
+    public float _curveLength = 6;
+
 	// Use this for initialization
 	void Start () {
-        CreateMesh();
+        CreateMesh(_length, _width, _curveDepth, _curveLength);
     }
 	
 	// Update is called once per frame
 	void Update () {
-	
-	}
+    }
 
-    void CreateMesh()
+    void CreateMesh(int length, int width, float curveDepth = 0f, float curveLength = 0f)
     {
         GameObject landscapeObject = Instantiate(_landscapeMesh);
+        landscapeObject.tag = "env";
         MeshFilter mf = landscapeObject.GetComponent<MeshFilter>();
 
         Mesh mesh = new Mesh();
 
-        int length = 100;
-        int width = 10;
         int totalVertices = (length + 1) * (width + 1);
 
         int vertexNumber = 0;
 
-        Vector3[] vertices = new Vector3[totalVertices]; //MAYBE OUT OF BOUNDS
+        Vector3[] vertices = new Vector3[totalVertices];
         
         /*
         Loop through the width of the plane then in each loop generate a full row in length of vertices
@@ -39,7 +41,7 @@ public class LandscapeGenerator : MonoBehaviour {
             for (int l = 0; l < length + 1; l++)
             {
                 //float x = w; //change to sin(l) + w for curve
-                float x = w + (Mathf.Sin((float)l / (float)6) * 5);
+                float x = w + (Mathf.Sin((float)l / (float)curveLength) * curveDepth);
                 float y = 0; 
                 float z = l;
 
@@ -69,14 +71,20 @@ public class LandscapeGenerator : MonoBehaviour {
             vertexNumbersTop.Add((i * (length + 1)) + length);
         }
 
-
-        int[] triangles = new int[((width * length) * 2) * 3]; //MAYBE OUT OF BOUNDS
+        int[] triangles = new int[((width * length) * 2) * 3]; 
         int triangleNumber = 0;
         for (int i = 0; i < totalVertices; i++)
         {
+
+            /*
+            If no vertices above the current vertex so no more triangles
+            */
             if (vertexNumbersTop.Contains(i))
                 continue;
 
+            /*
+            Create triangle to the left of the current vertex
+            */
             if (!vertexNumbersLeft.Contains(i))
             {
                 triangles[triangleNumber] = i;
@@ -87,6 +95,9 @@ public class LandscapeGenerator : MonoBehaviour {
                 triangleNumber++;
             }
 
+            /*
+            Create triangle to the right of the current vertex
+            */
             if (!vertexNumbersRight.Contains(i))
             {
                 triangles[triangleNumber] = i;
@@ -104,5 +115,6 @@ public class LandscapeGenerator : MonoBehaviour {
         mesh.Optimize();
 
         mf.mesh = mesh;
+        landscapeObject.GetComponent<MeshCollider>().sharedMesh = mf.mesh;
     }
 }
