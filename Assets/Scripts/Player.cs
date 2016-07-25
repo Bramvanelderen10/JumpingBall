@@ -6,7 +6,8 @@ public class Player : MonoBehaviour {
     public string _envTag;
     public int _maxJumps = 2;
 
-    private bool _grounded = false;
+    [HideInInspector]
+    public bool _grounded = false;
     private int _jumpCount = 0;
 
 	// Use this for initialization
