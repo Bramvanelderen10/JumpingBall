@@ -4,25 +4,59 @@ using System.Collections.Generic;
 
 public class LandscapeGenerator : MonoBehaviour {
 
+    public struct LastMeshInfo
+    {
+        public Vector3 position;
+        public Vector3 endPoint;
+
+        public LastMeshInfo(Vector3 position, Vector3 endPoint) : this()
+        {
+            this.position = position;
+            this.endPoint = endPoint;
+        }
+    }
+
     public GameObject _landscapeMesh;
 
-    public int _length = 100, _width = 10;
-    public float _curveDepth = 5;
-    public float _curveLength = 6;
+    public float distance = 250f;
+    private int _length = 100, _width = 10;
+    private float _curveDepth = 0f, _curveLength = 0f, _steepness = 2f;
+
+    private LastMeshInfo _lastMeshInfo;
+    private System.Random rnd = new System.Random();
 
 	// Use this for initialization
 	void Start () {
+        _lastMeshInfo = new LastMeshInfo(transform.position, new Vector3(0, 0, 0));
 
-        CreateMesh(_length, _width, _curveDepth, _curveLength);
+        RandomizeMesh();
+        CreateMesh(_length, _width, _curveDepth, _curveLength, _steepness);
+        RandomizeMesh();
+        CreateMesh(_length, _width, _curveDepth, _curveLength, _steepness);
     }
 	
 	// Update is called once per frame
 	void Update () {
+        Vector3 target = _lastMeshInfo.position + _lastMeshInfo.endPoint;
+        Vector3 position = Player.Instance.transform.position;
+
+        if (Vector3.Distance(position, target) < distance) 
+        {
+            RandomizeMesh();
+            CreateMesh(_length, _width, _curveDepth, _curveLength, _steepness);
+        }
     }
 
-    void CreateMesh(int length, int width, float curveDepth = 0f, float curveLength = 0f)
+    void CreateMesh(int length, int width, float curveDepth = 0f, float curveLength = 0f, float steepness = 1f)
     {
-        GameObject landscapeObject = ObjectPooler.Instance.GetPooledObject("landscape");
+        GameObject landscapeObject = ObjectPooler.Instance.GetPooledObject("Landscape");
+
+        Vector3 position = new Vector3();
+        position = _lastMeshInfo.position + _lastMeshInfo.endPoint;
+        landscapeObject.transform.position = position;
+
+        
+
         landscapeObject.SetActive(true);
         landscapeObject.tag = "env";
         MeshFilter mf = landscapeObject.GetComponent<MeshFilter>();
@@ -30,27 +64,6 @@ public class LandscapeGenerator : MonoBehaviour {
         Mesh mesh = new Mesh();
 
         int totalVertices = (length + 1) * (width + 1);
-
-        int vertexNumber = 0;
-
-        Vector3[] vertices = new Vector3[totalVertices];
-        
-        /*
-        Loop through the width of the plane then in each loop generate a full row in length of vertices
-        */
-        for (int w = 0; w < width + 1; w++)
-        {
-            for (int l = 0; l < length + 1; l++)
-            {
-                //float x = w; //change to sin(l) + w for curve
-                float x = w + (Mathf.Sin((float)l / (float)curveLength) * curveDepth);
-                float y = 0; 
-                float z = l;
-
-                vertices[vertexNumber] = new Vector3(x, y, z);
-                vertexNumber++;
-            }
-        }
 
         /*
         Find edge numbers
@@ -72,6 +85,39 @@ public class LandscapeGenerator : MonoBehaviour {
             vertexNumbersBot.Add(i * (length + 1));
             vertexNumbersTop.Add((i * (length + 1)) + length);
         }
+
+        int vertexNumber = 0;
+        Vector3[] vertices = new Vector3[totalVertices];        
+        /*
+        Loop through the width of the plane then in each loop generate a full row in length of vertices
+        */
+        for (int w = 0; w < width + 1; w++)
+        {
+            for (int l = 0; l < length + 1; l++)
+            {
+
+                int random = rnd.Next(0, 1);
+                if (random == 0)
+                    random = -1;
+                //float x = w; //change to sin(l) + w for curve
+                float x = w + ((Mathf.Sin((float)l / (float)curveLength) * random) * curveDepth);
+                float y = - ((float)l * steepness)/ 4f; 
+                float z = l;
+
+                vertices[vertexNumber] = new Vector3(x, y, z);
+
+                /*
+                Save last point to place the next generated mesh on the correct position
+                */
+                if (vertexNumbersLeft[vertexNumbersLeft.Count - 1] == vertexNumber)
+                {
+                    _lastMeshInfo.endPoint = vertices[vertexNumber];
+                    _lastMeshInfo.position = landscapeObject.transform.position;
+                }
+                    
+                vertexNumber++;
+            }
+        }        
 
         int[] triangles = new int[((width * length) * 2) * 3]; 
         int triangleNumber = 0;
@@ -118,5 +164,35 @@ public class LandscapeGenerator : MonoBehaviour {
 
         mf.mesh = mesh;
         landscapeObject.GetComponent<MeshCollider>().sharedMesh = mf.mesh;
+    }
+
+
+    //TODO IMPROVE CHOSING DIRECTIONS
+    void RandomizeMesh()
+    {
+        _length = (int)Random.Range(50, 200);
+        _width = 15;
+        _curveDepth = Random.Range(0, 50f);
+        if (_lastMeshInfo.endPoint.x < 0f) {
+            _curveDepth *= -1;
+        }
+
+        int random = rnd.Next(0, 1);
+        if (random == 0)
+            random = -1;
+        _curveLength = random * _curveDepth * Random.Range(1f, 4f);
+
+        if (_lastMeshInfo.endPoint.x > 30f)
+        {
+            _curveDepth = Random.Range(60f, 100f);
+            _curveLength = 90f;
+        }
+
+        if (_lastMeshInfo.endPoint.x < 10f)
+        {
+            _curveDepth = Random.Range(-60f, -100f);
+            _curveLength = 90f;
+        }
+        _steepness = Random.Range(1.7f, 2.1f);
     }
 }

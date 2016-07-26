@@ -44,10 +44,14 @@ public class ObjectPooler : MonoBehaviour {
         for (int i = 0; i < _pooledObjects.Count; i++)
         {
             List<PoolableObject> list = new List<PoolableObject>();
+            GameObject go = new GameObject();
+            go.name = _pooledObjects[i].name + "Pool";
+
             for (int o = 0; o < _pooledObjects[i].poolSize; o++)
             {
                 PoolableObject obj = Instantiate(_pooledObjects[i].prefab).GetComponent<PoolableObject>();
                 obj.gameObject.SetActive(false);
+                obj.gameObject.transform.parent = go.transform;
                 list.Add(obj);
             }
             _objectPools.Add(new PooledObject(_pooledObjects[i].name, _pooledObjects[i].poolSize, list));            

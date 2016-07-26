@@ -3,22 +3,38 @@ using System.Collections;
 
 public class Player : MonoBehaviour {
 
+    public static Player Instance;
+
     public string _envTag;
     public int _maxJumps = 2;
+
+    public float _gravityMultiplier = 20f;
 
     [HideInInspector]
     public bool _grounded = false;
     private int _jumpCount = 0;
+    private Rigidbody _rb;
 
-	// Use this for initialization
+	void Awake()
+    {
+        Instance = this;
+    }
+
 	void Start () {
-	
+        _rb = GetComponent<Rigidbody>();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    
+    void FixedUpdate()
+    {
+        if (_grounded)
+        {
+            _rb.AddForce((Physics.gravity * _gravityMultiplier) * _rb.mass);
+        } else
+        {
+            _rb.AddForce((Physics.gravity * (_gravityMultiplier / 4f) * _rb.mass));
+        }
+            
+    }
 
     void OnCollisionEnter(Collision collision)
     {

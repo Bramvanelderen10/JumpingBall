@@ -3,5 +3,5 @@ using System.Collections;
 
 public class Landscape : PoolableObject {
 
-    public new string _objectName = "landscape";
+    public new string _objectName = "Landscape";
 }

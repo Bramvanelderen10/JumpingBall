@@ -4,7 +4,6 @@ using System.Collections;
 public class PlayerInput : MonoBehaviour {
 
     public float _force = 2f;
-    public float _gravityMultiplier = 2f;
     public float _maxVelocity = 10f;
 
     private Rigidbody _rb;
@@ -42,7 +41,9 @@ public class PlayerInput : MonoBehaviour {
         {
             if (_player.CanJump())
             {
-                _rb.AddForce(new Vector3(0, _force, 0), ForceMode.Impulse);
+                Vector3 vel = _rb.velocity;
+                vel.y = 20f;
+                _rb.velocity = vel;
                 _player.Jump();
             }            
         }
@@ -74,10 +75,5 @@ public class PlayerInput : MonoBehaviour {
             velocity.z = -_maxVelocity;
             _rb.velocity = velocity;
         }
-    }
-
-    void FixedUpdate()
-    {
-        _rb.AddForce((Physics.gravity * _gravityMultiplier) * _rb.mass);        
     }
 }
