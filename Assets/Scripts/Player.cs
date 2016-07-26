@@ -15,6 +15,8 @@ public class Player : MonoBehaviour {
     private int _jumpCount = 0;
     private Rigidbody _rb;
 
+    private float _lastYPosition;
+
 	void Awake()
     {
         Instance = this;
@@ -23,6 +25,20 @@ public class Player : MonoBehaviour {
 	void Start () {
         _rb = GetComponent<Rigidbody>();
 	}
+
+    void Update()
+    {
+        if (_grounded)
+        {
+            _lastYPosition = transform.position.y;
+        } else
+        {
+            if (transform.position.y < (_lastYPosition - 5f))
+            {
+                this.gameObject.SetActive(false);
+            }
+        }
+    }
     
     void FixedUpdate()
     {

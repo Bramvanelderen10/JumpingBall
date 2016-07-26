@@ -101,7 +101,7 @@ public class LandscapeGenerator : MonoBehaviour {
                     random = -1;
                 //float x = w; //change to sin(l) + w for curve
                 float x = w + ((Mathf.Sin((float)l / (float)curveLength) * random) * curveDepth);
-                float y = - ((float)l * steepness)/ 4f; 
+                float y = (-((float)l * steepness) / 4f);
                 float z = l;
 
                 vertices[vertexNumber] = new Vector3(x, y, z);
