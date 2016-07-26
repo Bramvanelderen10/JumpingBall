@@ -12,6 +12,7 @@ public class LandscapeGenerator : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
         CreateMesh(_length, _width, _curveDepth, _curveLength);
     }
 	
@@ -21,7 +22,8 @@ public class LandscapeGenerator : MonoBehaviour {
 
     void CreateMesh(int length, int width, float curveDepth = 0f, float curveLength = 0f)
     {
-        GameObject landscapeObject = Instantiate(_landscapeMesh);
+        GameObject landscapeObject = ObjectPooler.Instance.GetPooledObject("landscape");
+        landscapeObject.SetActive(true);
         landscapeObject.tag = "env";
         MeshFilter mf = landscapeObject.GetComponent<MeshFilter>();
 
