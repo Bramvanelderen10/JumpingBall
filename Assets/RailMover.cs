@@ -6,16 +6,28 @@ public class RailMover : MonoBehaviour {
     public Transform _target;
     public Transform _lookAt;
 
+    public bool _smoothMovement = true;
+
     private Transform _transform;
+    private Vector3 lastPosition;
 
 	// Use this for initialization
 	void Start () {
         _transform = transform;
+        lastPosition = _transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        _transform.position = Rail.Instance.ProjectPositionOnRail(_target.position);
+        if (_smoothMovement)
+        {
+            lastPosition = Vector3.Lerp(lastPosition, Rail.Instance.ProjectPositionOnRail(_target.position), Time.deltaTime);
+            _transform.position = lastPosition;
+        } else
+        {
+            _transform.position = Rail.Instance.ProjectPositionOnRail(_target.position);
+        }
+        
         _transform.LookAt(_lookAt.position);
 	}
 }

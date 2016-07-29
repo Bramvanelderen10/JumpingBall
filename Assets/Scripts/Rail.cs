@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Rail : MonoBehaviour {
 
     public static Rail Instance;
+    public int _maxNodes = 200;
     public GameObject _testNodePrefab;
 
     private List<Vector3> _nodes;
@@ -83,7 +84,16 @@ public class Rail : MonoBehaviour {
 
     public void AddNode(Vector3 node)
     {
+        if (_nodes.Count == _maxNodes)
+        {
+            _nodes.RemoveAt(0);
+            _nodeCount--;
+        }
+            
         _nodes.Add(node);
+        
+        
+
         if (_testNodePrefab)
         {
             GameObject nodeObj = Instantiate(_testNodePrefab);
