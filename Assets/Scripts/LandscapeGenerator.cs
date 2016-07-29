@@ -18,9 +18,13 @@ public class LandscapeGenerator : MonoBehaviour {
 
     public GameObject _landscapeMesh;
 
-    public float distance = 250f;
+    public int _nodeInterval = 5;
+    public float _railHeight = 3f;
+
+    public float _distance = 250f;
     private int _length = 100, _width = 10;
     private float _curveDepth = 0f, _curveLength = 0f, _steepness = 2f;
+    
 
     private LastMeshInfo _lastMeshInfo;
     private System.Random rnd = new System.Random();
@@ -40,7 +44,7 @@ public class LandscapeGenerator : MonoBehaviour {
         Vector3 target = _lastMeshInfo.position + _lastMeshInfo.endPoint;
         Vector3 position = Player.Instance.transform.position;
 
-        if (Vector3.Distance(position, target) < distance) 
+        if (Vector3.Distance(position, target) < _distance) 
         {
             RandomizeMesh();
             CreateMesh(_length, _width, _curveDepth, _curveLength, _steepness);
@@ -87,21 +91,27 @@ public class LandscapeGenerator : MonoBehaviour {
         }
 
         int vertexNumber = 0;
-        Vector3[] vertices = new Vector3[totalVertices];        
+        Vector3[] vertices = new Vector3[totalVertices];
+
+        /*
+        Calculate middle of the plane
+        */
+        int mid = width / 2;
+                
         /*
         Loop through the width of the plane then in each loop generate a full row in length of vertices
         */
         for (int w = 0; w < width + 1; w++)
         {
+            int lengthCounter = 0;
             for (int l = 0; l < length + 1; l++)
             {
-
                 int random = rnd.Next(0, 1);
                 if (random == 0)
                     random = -1;
                 //float x = w; //change to sin(l) + w for curve
                 float x = w + ((Mathf.Sin((float)l / (float)curveLength) * random) * curveDepth);
-                float y = (-((float)l * steepness) / 4f);
+                float y = ((-((float)l * steepness) / 4f) + Mathf.Pow((float)w - (((float)width + 1f) / 2f), 2f) / 8f);
                 float z = l;
 
                 vertices[vertexNumber] = new Vector3(x, y, z);
@@ -112,9 +122,30 @@ public class LandscapeGenerator : MonoBehaviour {
                 if (vertexNumbersLeft[vertexNumbersLeft.Count - 1] == vertexNumber)
                 {
                     _lastMeshInfo.endPoint = vertices[vertexNumber];
+                    _lastMeshInfo.endPoint.y = ((-((float)l * steepness) / 4f));
                     _lastMeshInfo.position = landscapeObject.transform.position;
                 }
-                    
+                /*
+                Place rail nodes
+                */   
+                if (w == mid)
+                {
+                    if (lengthCounter == 0)
+                    {
+                        Vector3 node = _lastMeshInfo.position;
+                        Vector3 adjustment = vertices[vertexNumber];
+                        adjustment.y = ((-((float)l * steepness) / 4f)) + _railHeight;
+                        node += adjustment;
+
+                        Rail.Instance.AddNode(node);
+                    }
+                    lengthCounter++;
+                    if (lengthCounter == _nodeInterval)
+                    {
+                        lengthCounter = 0;
+                    }
+                }
+
                 vertexNumber++;
             }
         }        
@@ -172,25 +203,25 @@ public class LandscapeGenerator : MonoBehaviour {
     {
         _length = (int)Random.Range(50, 200);
         _width = 15;
-        _curveDepth = Random.Range(0, 50f);
-        if (_lastMeshInfo.endPoint.x < 0f) {
-            _curveDepth *= -1;
-        }
+        //_curveDepth = Random.Range(0, 50f);
+        //if (_lastMeshInfo.endPoint.x < 0f) {
+        //    _curveDepth *= -1;
+        //}
 
-        int random = rnd.Next(0, 1);
-        if (random == 0)
-            random = -1;
-        _curveLength = random * _curveDepth * Random.Range(1f, 4f);
+        //int random = rnd.Next(0, 1);
+        //if (random == 0)
+        //    random = -1;
+        //_curveLength = random * _curveDepth * Random.Range(1f, 4f);
 
-        if (_lastMeshInfo.endPoint.x > 30f)
+        if (_lastMeshInfo.endPoint.x >= 0f)
         {
-            _curveDepth = Random.Range(60f, 100f);
+            _curveDepth = Random.Range(0f, 100f);
             _curveLength = 90f;
         }
 
-        if (_lastMeshInfo.endPoint.x < 10f)
+        if (_lastMeshInfo.endPoint.x < 0f)
         {
-            _curveDepth = Random.Range(-60f, -100f);
+            _curveDepth = Random.Range(0f, -100f);
             _curveLength = 90f;
         }
         _steepness = Random.Range(1.7f, 2.1f);
