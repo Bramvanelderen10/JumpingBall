@@ -5,6 +5,7 @@ public class PlayerInput : MonoBehaviour {
 
     public float _force = 2f;
     public float _maxVelocity = 10f;
+    public float _jumpVelocity = 2f;
 
     private Rigidbody _rb;
     private Player _player;
@@ -42,7 +43,7 @@ public class PlayerInput : MonoBehaviour {
             if (_player.CanJump())
             {
                 Vector3 vel = _rb.velocity;
-                vel.y = 20f;
+                vel.y = _jumpVelocity;
                 _rb.velocity = vel;
                 _player.Jump();
             }            

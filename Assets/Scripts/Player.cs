@@ -28,16 +28,16 @@ public class Player : MonoBehaviour {
 
     void Update()
     {
-        if (_grounded)
-        {
-            _lastYPosition = transform.position.y;
-        } else
-        {
-            if (transform.position.y < (_lastYPosition - 5f))
-            {
-                this.gameObject.SetActive(false);
-            }
-        }
+        //if (_grounded)
+        //{
+        //    _lastYPosition = transform.position.y;
+        //} else
+        //{
+        //    if (transform.position.y < (_lastYPosition - 5f))
+        //    {
+        //        this.gameObject.SetActive(false);
+        //    }
+        //}
     }
     
     void FixedUpdate()

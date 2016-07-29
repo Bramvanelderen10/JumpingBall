@@ -6,8 +6,6 @@ using UnityEngine;
 
 abstract public class PoolableObject : MonoBehaviour
 {
-    public string _objectName;
-
     public void Destroy()
     {
         this.gameObject.SetActive(false);
