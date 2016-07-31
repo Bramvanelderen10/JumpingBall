@@ -38,6 +38,9 @@ public class PlayerInput : MonoBehaviour {
             _rb.AddForce(new Vector3(0, 0, -(_force / 1.0f)), ForceMode.Force);
         }
 
+        Quaternion rotation = Rail.Instance.GetRailRotation(transform.position);
+        print(rotation.eulerAngles);
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (_player.CanJump())

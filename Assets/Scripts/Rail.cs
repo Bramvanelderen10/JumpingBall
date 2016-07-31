@@ -11,13 +11,11 @@ public class Rail : MonoBehaviour {
     private List<Vector3> _nodes;
     private int _nodeCount;
 
-    // Use this for initialization
     void Start() {
         Instance = this;
         _nodeCount = transform.childCount;
         _nodes = new List<Vector3>();
-    }
-    
+    }    
 
     public Vector3 ProjectPositionOnRail(Vector3 pos)
     {
@@ -25,9 +23,11 @@ public class Rail : MonoBehaviour {
 
         if (closestNodeIndex == 0)
         {
+
             return ProjectOnSegment(_nodes[0], _nodes[1], pos);
         } else if (closestNodeIndex == _nodeCount - 1)
         {
+
             return ProjectOnSegment(_nodes[_nodeCount - 1], _nodes[_nodeCount - 2], pos);
         } else
         {
@@ -36,13 +36,25 @@ public class Rail : MonoBehaviour {
 
             if ((pos - leftSeg).sqrMagnitude <= (pos - rightSeg).sqrMagnitude)
             {
+
                 return leftSeg;
             } else
             {
+
                 return rightSeg;
             }
         }
+    }
 
+    public Quaternion GetRailRotation(Vector3 pos)
+    {
+        int closestNodeIndex = GetClosestNodeIndex(pos);
+        Vector3 v1 = _nodes[closestNodeIndex];
+        Vector3 v2 = _nodes[closestNodeIndex + 1];
+
+        Quaternion rotation = Quaternion.LookRotation(v1 - v2);
+
+        return rotation;
     }
 
     private int GetClosestNodeIndex(Vector3 pos)
@@ -71,13 +83,16 @@ public class Rail : MonoBehaviour {
         float distanceFromV1 = Vector3.Dot(segDirection, v1ToPos);
         if (distanceFromV1 < 0f)
         {
+
             return v1;
         } else if (distanceFromV1 * distanceFromV1 > (v2 - v1).sqrMagnitude)
         {
+
             return v2;
         } else
         {
             Vector3 fromV1 = segDirection * distanceFromV1;
+
             return v1 + fromV1;
         }
     }
@@ -89,11 +104,7 @@ public class Rail : MonoBehaviour {
             _nodes.RemoveAt(0);
             _nodeCount--;
         }
-            
         _nodes.Add(node);
-        
-        
-
         if (_testNodePrefab)
         {
             GameObject nodeObj = Instantiate(_testNodePrefab);

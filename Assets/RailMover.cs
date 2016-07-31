@@ -11,13 +11,11 @@ public class RailMover : MonoBehaviour {
     private Transform _transform;
     private Vector3 lastPosition;
 
-	// Use this for initialization
 	void Start () {
         _transform = transform;
         lastPosition = _transform.position;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
         if (_smoothMovement)
         {
@@ -26,8 +24,7 @@ public class RailMover : MonoBehaviour {
         } else
         {
             _transform.position = Rail.Instance.ProjectPositionOnRail(_target.position);
-        }
-        
+        }        
         _transform.LookAt(_lookAt.position);
 	}
 }
