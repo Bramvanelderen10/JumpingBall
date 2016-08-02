@@ -54,12 +54,12 @@ public class LandscapeGenerator : MonoBehaviour {
     void CreateMesh(int length, int width, float curveDepth = 0f, float curveLength = 0f, float steepness = 1f)
     {
         GameObject landscapeObject = ObjectPooler.Instance.GetPooledObject("Landscape");
+        if (!landscapeObject)
+            return;
 
         Vector3 position = new Vector3();
         position = _lastMeshInfo.position + _lastMeshInfo.endPoint;
-        landscapeObject.transform.position = position;
-
-        
+        landscapeObject.transform.position = position;        
 
         landscapeObject.SetActive(true);
         landscapeObject.tag = "env";
@@ -111,7 +111,9 @@ public class LandscapeGenerator : MonoBehaviour {
                     random = -1;
                 //float x = w; //change to sin(l) + w for curve
                 float x = w + ((Mathf.Sin((float)l / (float)curveLength) * random) * curveDepth);
-                float y = ((-((float)l * steepness) / 4f) + Mathf.Pow((float)w - (((float)width + 1f) / 2f), 2f) / 8f);
+                float temp_steep = (-((float)l * steepness) / 4f);
+                float parabooleCurve = Mathf.Pow((float)w - (((float)width + 1f) / 2f), 2f) / 24f;
+                float y = 0 + parabooleCurve;
                 float z = l;
 
                 vertices[vertexNumber] = new Vector3(x, y, z);
@@ -122,7 +124,7 @@ public class LandscapeGenerator : MonoBehaviour {
                 if (vertexNumbersLeft[vertexNumbersLeft.Count - 1] == vertexNumber)
                 {
                     _lastMeshInfo.endPoint = vertices[vertexNumber];
-                    _lastMeshInfo.endPoint.y = ((-((float)l * steepness) / 4f));
+                    _lastMeshInfo.endPoint.y = 0; // add steepness if you want downcuve
                     _lastMeshInfo.position = landscapeObject.transform.position;
                 }
                 /*
@@ -134,7 +136,8 @@ public class LandscapeGenerator : MonoBehaviour {
                     {
                         Vector3 node = _lastMeshInfo.position;
                         Vector3 adjustment = vertices[vertexNumber];
-                        adjustment.y = ((-((float)l * steepness) / 4f)) + _railHeight;
+                        //adjustment.y = ((-((float)l * steepness) / 4f)) + _railHeight;
+                        adjustment.y += _railHeight;
                         node += adjustment;
 
                         Rail.Instance.AddNode(node);
@@ -202,7 +205,7 @@ public class LandscapeGenerator : MonoBehaviour {
     void RandomizeMesh()
     {
         _length = (int)Random.Range(50, 200);
-        _width = 15;
+        _width = 24;
         //_curveDepth = Random.Range(0, 50f);
         //if (_lastMeshInfo.endPoint.x < 0f) {
         //    _curveDepth *= -1;

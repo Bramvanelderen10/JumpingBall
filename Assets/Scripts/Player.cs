@@ -8,6 +8,7 @@ public class Player : MonoBehaviour {
     public string _envTag;
     public int _maxJumps = 2;
 
+    public float _force = 20f;
     public float _gravityMultiplier = 20f;
 
     [HideInInspector]
@@ -45,11 +46,17 @@ public class Player : MonoBehaviour {
         if (_grounded)
         {
             _rb.AddForce((Physics.gravity * _gravityMultiplier) * _rb.mass);
-        } else
+        }
+        else
         {
             _rb.AddForce((Physics.gravity * (_gravityMultiplier / 4f) * _rb.mass));
         }
-            
+
+        Quaternion rotation = Rail.Instance.GetRailRotation(transform.position);
+        Vector3 vel = _rb.velocity;
+        vel.z = (rotation * new Vector3(0, 0, _force)).z;
+        vel.x = (rotation * new Vector3(0, 0, _force)).x;
+        _rb.velocity = vel;
     }
 
     void OnCollisionEnter(Collision collision)

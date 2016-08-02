@@ -48,11 +48,17 @@ public class Rail : MonoBehaviour {
 
     public Quaternion GetRailRotation(Vector3 pos)
     {
+        if (_nodes.Count == 0)
+            return new Quaternion(0, 0, 0, 0);
+
         int closestNodeIndex = GetClosestNodeIndex(pos);
         Vector3 v1 = _nodes[closestNodeIndex];
         Vector3 v2 = _nodes[closestNodeIndex + 1];
-
-        Quaternion rotation = Quaternion.LookRotation(v1 - v2);
+        Quaternion rotation = new Quaternion(0, 0, 0, 0);
+        if (v1 != v2)
+        {
+            rotation = Quaternion.LookRotation((v2 - v1).normalized);
+        }
 
         return rotation;
     }

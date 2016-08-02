@@ -18,28 +18,16 @@ public class PlayerInput : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        Quaternion rotation = Rail.Instance.GetRailRotation(transform.position);
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            _rb.AddForce(new Vector3(-_force, 0, 0), ForceMode.Force);
+            _rb.AddForce((rotation * new Vector3(-_force, 0, 0)), ForceMode.Force);
         }
 
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            _rb.AddForce(new Vector3(_force, 0, 0), ForceMode.Force);
+            _rb.AddForce((rotation * new Vector3(_force, 0, 0)), ForceMode.Force);
         }
-
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            _rb.AddForce(new Vector3(0, 0, (_force / 1.0f)), ForceMode.Force);
-        }
-
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            _rb.AddForce(new Vector3(0, 0, -(_force / 1.0f)), ForceMode.Force);
-        }
-
-        Quaternion rotation = Rail.Instance.GetRailRotation(transform.position);
-        print(rotation.eulerAngles);
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
