@@ -29,6 +29,24 @@ public class PlayerInput : MonoBehaviour {
             _rb.AddForce((rotation * new Vector3(_force, 0, 0)), ForceMode.Force);
         }
 
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            _player.EditBonusForce(3f);
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            _player.EditBonusForce(-3f);
+        }
+        if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            _player.EditBonusForce(0f);
+        }
+        if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            _player.EditBonusForce(0f);
+        }
+
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (_player.CanJump())

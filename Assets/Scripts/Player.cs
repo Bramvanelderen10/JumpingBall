@@ -16,6 +16,8 @@ public class Player : MonoBehaviour {
     private int _jumpCount = 0;
     private Rigidbody _rb;
 
+    private float _bonusForce = 0f;
+
     private float _lastYPosition;
 
 	void Awake()
@@ -54,8 +56,8 @@ public class Player : MonoBehaviour {
 
         Quaternion rotation = Rail.Instance.GetRailRotation(transform.position);
         Vector3 vel = _rb.velocity;
-        vel.z = (rotation * new Vector3(0, 0, _force)).z;
-        vel.x = (rotation * new Vector3(0, 0, _force)).x;
+        vel.z = (rotation * new Vector3(0, 0, _force + _bonusForce)).z;
+        vel.x = (rotation * new Vector3(0, 0, _force + _bonusForce)).x;
         _rb.velocity = vel;
     }
 
@@ -80,5 +82,12 @@ public class Player : MonoBehaviour {
             _grounded = false;
             _jumpCount++;
         }
-    }    
+    }
+
+    public void EditBonusForce(float force)
+    {
+        _bonusForce = force;
+    }
+    
+        
 }
